@@ -4,6 +4,9 @@
  */
 package main;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 /**
  *
  * @author migu_
@@ -11,9 +14,10 @@ package main;
 public class frmMain extends javax.swing.JFrame {
     
     String[][] sala_cine = new String[3][5]; // sala de cine con 5 asientos en cada fila
-    int filas_llenas; // contador de filas que se van llenando
+    int filas_llenas=0; // contador de filas que se van llenando
     int asientos_ocupados = 0; // contador de posiciones para los asientos de una fila
-
+    int contfilas=0;
+    DecimalFormat df =new DecimalFormat("#.00");
     /**
      * Creates new form frmMain
      */
@@ -24,12 +28,50 @@ public class frmMain extends javax.swing.JFrame {
                 sala_cine[i][j] = "Vacío";
         }
     }
-    
+    public synchronized void Monitor(String nomb, float dinero){
+        String asiento_ob;
+        int poporo=0, chicles=0; 
+        if(asientos_ocupados==5){
+         filas_llenas++;
+         asientos_ocupados=0;
+        }
+        System.out.println("Inicia Compra de Cliente "+nomb+"\n Tengo Q"+dinero+"\n Que me alcanza?");
+         sala_cine[filas_llenas][asientos_ocupados] = nomb;
+            String fila = switch (filas_llenas) {
+                case 0 -> "A";
+                case 1 -> "B";
+                default -> "C";
+            };
+            asiento_ob = "Fila " + fila + " Asiento " + String.valueOf(asientos_ocupados + 1);
+            asientos_ocupados++;
+            System.out.println("Compra entrada Q48.00");
+            dinero=dinero-48;
+            while(dinero>=5)
+            {
+                if(dinero>=30)
+                {
+                    poporo++;
+                    dinero=dinero-30;
+                }
+                else if(dinero>=5)
+                {
+                    chicles++;
+                    dinero=dinero-5;
+                }
+            }
+            System.out.println("Compro Poporopos #"+poporo+"\n Compro Dulces #"+chicles+"\n Vuelto colocho es de Q"+df.format(dinero));
+            //entrada 48, poporopos 30, dulces 5
+            // el cliente debe indicarle al portero que asiento tiene
+            // también debe mostrar cuanto le quedo de dinero para el próximo estreno
+            System.out.println(nomb + " finalizado con status: 0");
+            System.out.println("***************************************");
+    }
+            
     public class Cliente extends Thread {
         String nombre;
         String asiento_obtenido;
         float dinero;
-
+        
         public Cliente(char letra) {
             nombre = "Cliente " + letra;
             this.dinero = (float)(Math.random()* 100 + 50);
@@ -37,20 +79,9 @@ public class frmMain extends javax.swing.JFrame {
         
         @Override
         public void run() {
-            System.out.println("Proceso " + this.nombre + " iniciado. Tengo Q " + this.dinero);
-            // Antes de escoger asiento debe comprar lo que pueda con el dinero que tenga
-            // La entrada cuesta Q 48, los poporopos Q 30 y los dulces Q 5
-            sala_cine[filas_llenas][asientos_ocupados] = this.nombre;
-            String fila = switch (filas_llenas) {
-                case 0 -> "A";
-                case 1 -> "B";
-                default -> "C";
-            };
-            this.asiento_obtenido = "Fila " + fila + " Asiento " + String.valueOf(asientos_ocupados + 1);
-            asientos_ocupados++;
-            // el cliente debe indicarle al portero que asiento tiene
-            // también debe mostrar cuanto le quedo de dinero para el próximo estreno
-            System.out.println(this.nombre + " finalizado con status: 0");
+            System.out.println("Proceso " + this.nombre + " iniciado. Tengo Q " + df.format(dinero));
+            System.out.println("****************************");
+            Monitor(this.nombre,this.dinero);
         }
     }
 
@@ -126,7 +157,7 @@ public class frmMain extends javax.swing.JFrame {
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         Cliente c;
         char letra = 'A';
-        for (int i=0; i<3; i++){
+        for (int i=0; i<15; i++){
             c = new Cliente(letra);
             c.start();
             letra++;
