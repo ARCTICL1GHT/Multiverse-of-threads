@@ -35,6 +35,7 @@ public class frmMain extends javax.swing.JFrame {
          filas_llenas++;
          asientos_ocupados=0;
         }
+        Thread.sleep(10);
         System.out.println("Inicia Compra de Cliente "+nomb+"\n Tengo Q"+dinero+"\n Que me alcanza?");
          sala_cine[filas_llenas][asientos_ocupados] = nomb;
             String fila = switch (filas_llenas) {
