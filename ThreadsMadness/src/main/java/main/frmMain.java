@@ -155,6 +155,8 @@ public class frmMain extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        filas_llenas=0;
+        asientos_ocupados=0;
         Cliente c;
         char letra = 'A';
         for (int i=0; i<15; i++){
